@@ -4,3 +4,6 @@ src/strategies/*
 
 src/backtests/*
 !src/backtests/backtest_continuation_trade.py
+!src/backtests/backtest_reports
+src/backtests/backtest_reports/*
+!src/backtests/backtest_reports/Continuation_Trade
