@@ -103,10 +103,13 @@ class Backtest():
                         upper_percentile = np.percentile(sample, 95, axis=1)
                         lower_percentile = np.percentile(sample, 5, axis=1)
                         axs[idx_subplot][0].plot(sample, color='y', alpha=0.05)
-                        axs[idx_subplot][0].plot(mean_percentile, color='r')
-                        axs[idx_subplot][0].plot(upper_percentile, color='r')
+                        axs[idx_subplot][0].plot(mean_percentile, color='g',
+                                                 label='50% Confidence Interval')
+                        axs[idx_subplot][0].plot(upper_percentile, color='r',
+                                                 label='90% Confidence Interval')
                         axs[idx_subplot][0].plot(lower_percentile, color='r')
-                        axs[idx_subplot][0].plot(rtit.equity_curve, color='b')
+                        axs[idx_subplot][0].plot(rtit.equity_curve, color='k',
+                                                 label='Equity Curve')
 
                         axs[idx_subplot][1].axis('off')
                         table = axs[idx_subplot][1].table(cellText=[[stats_dict['sharpe']],
@@ -120,6 +123,7 @@ class Backtest():
                         table.auto_set_column_width(col=[0, 1])
 
                         axs[idx_subplot][0].set_ylim([0, 1.1*upper_percentile.max()])
+                        axs[idx_subplot][0].legend()
 
                         axs[idx_subplot][0].set_title(
                             'Equity Curve ' + market_name
