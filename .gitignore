@@ -1,5 +1,6 @@
-src/strategies
+src/strategies/*
 !src/strategies/ContinuationTrade.py
 
-src/backtests
+
+src/backtests/*
 !src/backtests/backtest_continuation_trade.py
