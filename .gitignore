@@ -3,5 +3,3 @@ src/strategies
 
 src/backtests
 !src/backtests/backtest_continuation_trade.py
-
-/database
