@@ -5,12 +5,12 @@ Classes
     ContinuationTrade:
         Implement the buy and sell logic of a continuation trade.
 """
-from dataclasses import dataclass
 import logging
 
 import numpy as np
 import pandas as pd
 
+from Assets import Asset, Params
 from MarketStructure import MarketStructure
 from Strategy import Strategy
 
@@ -31,24 +31,19 @@ class ContinuationTrade(Strategy):
         trades.
     """
 
-    def __init__(self, ms: MarketStructure, asset: dataclass):
+    def __init__(self, ms: MarketStructure, asset: Asset, params: Params):
         """
         Parameters
         ----------
-        ec : RESTClient
-            Exchange client to interact with the exchange.
         ms : MarketStructure
             Represent the market structure of the asset.
-        asset : dict
+        asset : Asset
             Asset to trade.
-        live : bool, optional
-            Whether the strategy is live or not, by default False
-        message : bool, optional
-            Whether to send messages to Telegram, by default True
+        params : Params
+            Parameters for the strategy.
         """
 
-        super().__init__(ms, asset)
-        self._risk_reward = asset.risk_reward
+        super().__init__(ms, asset, params)
 
     def next_candle_setup(self, row: pd.Series) -> None:
         """Activates trade triggers and sets stop losses.
@@ -95,7 +90,7 @@ class ContinuationTrade(Strategy):
                     target = self.ms.prev_high[0]
                     risk = price - self._stop_loss
                     reward_risk = (target - price)/risk
-                    if reward_risk >= self._risk_reward:
+                    if reward_risk >= self._params.reward_risk:
                         self._target = target
                         self._long(price, risk/price)
                         self.num_trades += 1
@@ -125,7 +120,7 @@ class ContinuationTrade(Strategy):
                 if price >= self._entry:
                     risk = self._stop_loss - price
                     reward_risk = (price - self.ms.prev_low[0])/risk
-                    if reward_risk >= self._risk_reward:
+                    if reward_risk >= self._params.reward_risk:
                         self._target = self.ms.prev_low[0]
                         self._short(price, risk/price)
                         self.num_trades += 1

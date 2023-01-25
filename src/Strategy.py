@@ -12,9 +12,8 @@ from abc import ABC, abstractmethod
 
 import numpy as np
 import pandas as pd
-import matplotlib.pyplot as plt
-from dataclasses import dataclass
 
+from Assets import Asset, Params
 from MarketStructure import MarketStructure
 
 
@@ -43,13 +42,9 @@ class Strategy(ABC):
     -------
     equity -> float:
         Returns the current equity of the strategy.
-    plot_equity() -> None:
-        Plots the equity curve of the strategy.
-    plot_position_size() -> None:
-        Plots the position size of the strategy.
     """
 
-    def __init__(self, ms: MarketStructure, asset: dataclass):
+    def __init__(self, ms: MarketStructure, asset: Asset, params: Params):
         """
         Parameters
         ----------
@@ -59,14 +54,13 @@ class Strategy(ABC):
             Dictionary of asset information.
         """
 
-        self.ms = ms
-        self.timeframe = asset.timeframe
-        self.equity_curve = np.array([asset.initial_equity])
         self.position_size = [0]
         self.num_trades = 0
         self.wins = 0
         self.win_rate = 0
-        self._strat_name = asset.strategy_name
+        self.equity_curve = np.array([asset.initial_equity])
+        self._equity = asset.initial_equity
+        self.timeframe = asset.timeframe
         self._position = 0
         self._long_trigger = False
         self._long_position = False
@@ -75,8 +69,10 @@ class Strategy(ABC):
         self._entry = None
         self._stop_loss = None
         self._target = None
+
+        self.ms = ms
         self._asset = asset
-        self._equity = asset.initial_equity
+        self._params = params
 
     @abstractmethod
     def next_candle_setup(self, row: pd.Series) -> None:
@@ -107,18 +103,6 @@ class Strategy(ABC):
         else:
             return self._equity
 
-    def plot_equity_curve(self) -> None:
-        """Plots the equity curve of the strategy."""
-
-        plt.plot(self.equity_curve)
-        plt.show()
-
-    def plot_position_size(self) -> None:
-        """Plots the position size of the strategy over time."""
-
-        plt.plot(self._position_size)
-        plt.show()
-
     def _long(self, price: float, risk: float) -> None:
         """Enters a long trade.
 
@@ -130,8 +114,8 @@ class Strategy(ABC):
             The risk per trade.
         """
 
-        trade_size = min(self._asset.max_leverage*self._equity,
-                         (self._asset.max_risk/risk) * self._equity)
+        trade_size = min(self._params.leverage*self._equity,
+                         (self._params.risk/risk) * self._equity)
         coins = round(trade_size/price, self._asset.decimals)
         self._position += coins
         self._equity -= coins*price # (1.+self.ec.taker_fees_USD_futures) \
@@ -148,8 +132,8 @@ class Strategy(ABC):
             The risk per trade.
         """
 
-        trade_size = min(self._asset.max_leverage*self._equity,
-                         (self._asset.max_risk/risk) * self._equity)
+        trade_size = min(self._params.leverage*self._equity,
+                         (self._params.risk/risk) * self._equity)
         coins = round(trade_size/price, self._asset.decimals)
         self._position -= coins
         self._equity += coins*price # (1.-self.ec.taker_fees_USD_futures) * coins*price

@@ -6,18 +6,15 @@ Classes
         Represents a portfolio of trading strategies.
 """
 
-from datetime import datetime, timedelta
-
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 from tqdm import tqdm
 
-from MarketStructure import MarketStructure
 from Strategy import Strategy
 
 
-class Portfolio:
+class PortfolioManager:
     """Collect several trading strategies into a portfolio of trading
     strategies.
 
@@ -27,8 +24,6 @@ class Portfolio:
     ----------
     strategies : list
         List of trading strategies.
-    markets : dict
-        Dictionary of tickers and their corresponding markets.
 
     Methods
     -------
@@ -38,22 +33,17 @@ class Portfolio:
         Plot the portfolios equity curve
     add_strategy(strategy: Strategy) -> None:
         Add a new strategy to the portfolio.
-    build_portfolio() -> None:
-        Build a portfolio of strategies from given markets
     """
 
-    def __init__(self, markets: dict, strategies: list = []):
+    def __init__(self, strategies: list = []):
         """
         Parameters
         ----------
-        markets : dict
-            Dictionary of tickers and their corresponding markets.
         strategies : list
             List of trading strategies.
         """
 
         self.strategies = strategies
-        self.markets = markets
 
     @property
     def equity_curve(self) -> float:
@@ -110,21 +100,6 @@ class Portfolio:
 
         self.strategies.append(strategy)
 
-    def build_portfolio(self) -> None:
-        """Build a portfolio of strategies from given markets"""
-
-        for idxm, market in enumerate(self.markets):
-
-            strategy_constructor = market.strategy
-            ath = market.ath
-            prev_low = market.prev_low
-
-            ms = MarketStructure(ath, prev_low, ath, prev_low)
-
-            strategy = strategy_constructor(ms, market)
-
-            self.add_strategy((market, strategy))
-
     def initialize_trades(self) -> None:
         """Go through a given set of historical data and applies the trading
         strategy to this data, tracking results."""
@@ -133,7 +108,7 @@ class Portfolio:
             start_time = strat[0].start_time
             
             df = pd.read_csv('./database/datasets/binance_futures/' +
-                             strat[0].market_name + '/'
+                             strat[0].ticker + '/'
                              + strat[1].timeframe + '.csv')
             df = df[df['open time'] >= int(start_time.timestamp()*1000)]
 
