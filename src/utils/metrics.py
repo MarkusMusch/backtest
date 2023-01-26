@@ -1,5 +1,4 @@
 import numpy as np
-import matplotlib.pyplot as plt
 
 def calculate_returns(equity_curve: np.array) -> np.array:
     """Calculate returns from equity curve.
@@ -149,3 +148,43 @@ def calculate_musch(equity_curve: np.array) -> np.array:
     musch = 0 if (max_dd == -1 or max_dd == 0) else round(returns / ((1/((1+max_dd)**5)) - 1), 2)
 
     return musch
+
+
+
+def get_stats(equity_curve: np.array) -> dict:
+    """Calculate important stats of a strategy and return them in a dict.
+
+    Parameters
+    ----------
+    equity_curve : np.array
+        The equity curve of the strategy.
+    """
+
+    returns = calculate_returns(equity_curve)
+    mean = returns.mean()
+    std = returns.std()
+    max_dd = calculate_max_drawdown(equity_curve)
+    coeff_of_var = calculate_coeff_of_var(returns)
+    sharpe = calculate_sharpe(returns)
+    sortino = calculate_sortino(returns)
+    omega = calculate_omega(returns)
+    musch = calculate_musch(equity_curve)
+
+    return {'returns': returns, 'mean': mean, 'std': std,
+            'max_dd': max_dd, 'coeff_of_var': coeff_of_var,
+            'sharpe': sharpe, 'sortino': sortino, 'omega': omega,
+            'musch': musch}
+
+def print_stats(equity_curve: np.array) -> None:
+    """Calculate and print important stats of the strategy."""
+
+    stats = get_stats(equity_curve)
+
+    print('Mean:            {:.2%}'.format(stats['mean']))
+    print('Standard Deviation: {:.2%}'.format(stats['std']))
+    print('Max Drawdown:    {:.2%}'.format(stats['max_dd']))
+    print('Coefficient of Variation: {:.2f}'.format(stats['coeff_of_var']))
+    print('Hourly Sharpe:    {:.2f}'.format(stats['sharpe']))
+    print('Hourly Sortino:   {:.2f}'.format(stats['sortino']))
+    print('Hourly Omega:     {:.2f} '.format(stats['omega']))
+    print('Hourly Musch:     {:.2f} \n'.format(stats['musch']))

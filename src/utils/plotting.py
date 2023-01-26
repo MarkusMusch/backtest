@@ -1,13 +1,13 @@
-from dataclasses import dataclass
 import os
 
 import numpy as np
 import matplotlib.pyplot as plt
 
-from Assets import Asset
-from Stats import Stats
+import utils.metrics as metrics
+from Strategy import TradeLog
 
-def plot_backtest(market: Asset, params: dataclass, timeframe: str,
+
+def plot_backtest(trade_log: TradeLog,
                   strategy_name: str,
                   equity_train: np.array,
                   equity_test: np.array) -> None:
@@ -18,7 +18,6 @@ def plot_backtest(market: Asset, params: dataclass, timeframe: str,
 
     x = np.linspace(0, x_train+x_test-1, x_train+x_test)
 
-    stats = Stats()
     fig, axs = plt.subplots(1, 2, figsize=(15, 8),
                             gridspec_kw={'width_ratios': [5, 1]})
 
@@ -26,9 +25,8 @@ def plot_backtest(market: Asset, params: dataclass, timeframe: str,
                  + strategy_name)
     fig.subplots_adjust(hspace=0.4)
 
-    # stats.print_stats(rtit.equity_curve)
-    stats_train = stats.get_stats(equity_train)
-    stats_test = stats.get_stats(equity_test)
+    stats_train = metrics.get_stats(equity_train)
+    stats_test = metrics.get_stats(equity_test)
 
     # Bootstrap confidence interval
     sample = np.random.choice(stats_train['returns'],
@@ -58,16 +56,16 @@ def plot_backtest(market: Asset, params: dataclass, timeframe: str,
     axs[0].set_ylim([0, 1.1*upper_percentile.max()])
     axs[0].legend()
 
-    axs[0].set_title('Equity Curve ' + market.market_name 
-                     + ' at max. risk {:.2%} '.format(params.risk)
-                     + 'with max. leverage {:.1f} '.format(params.leverage)
-                     + 'and R/R {:.1f} \n'.format(params.reward_risk))
+    axs[0].set_title('Equity Curve ' + trade_log.asset.ticker
+                     + ' at max. risk {:.2%} '.format(trade_log.params.risk)
+                     + 'with max. leverage {:.1f} '.format(trade_log.params.leverage)
+                     + 'and R/R {:.1f} \n'.format(trade_log.params.reward_risk))
     axs[0].grid(True)
 
     path = './src/backtests/backtest_reports/' + strategy_name \
-            + '/' + market.market_name + '/'
+            + '/' + trade_log.asset.ticker + '/'
     if not os.path.exists(path):
         os.makedirs(path)
 
-    plt.savefig(path + timeframe.value + '.pdf', dpi=300)
-    print(market.market_name, ' done! \n')
+    plt.savefig(path + trade_log.params.timeframe + '.pdf', dpi=300)
+    print(trade_log.asset.ticker, ' done! \n')

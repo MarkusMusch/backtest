@@ -10,8 +10,7 @@ import logging
 import numpy as np
 import pandas as pd
 
-from Assets import Asset, Params
-from MarketStructure import MarketStructure
+from Assets import Asset, Params, TradeData
 from Strategy import Strategy
 
 
@@ -31,21 +30,11 @@ class ContinuationTrade(Strategy):
         trades.
     """
 
-    def __init__(self, ms: MarketStructure, asset: Asset, params: Params):
-        """
-        Parameters
-        ----------
-        ms : MarketStructure
-            Represent the market structure of the asset.
-        asset : Asset
-            Asset to trade.
-        params : Params
-            Parameters for the strategy.
-        """
+    def __init__(self):
+        super().__init__()
 
-        super().__init__(ms, asset, params)
-
-    def next_candle_setup(self, row: pd.Series) -> None:
+    def next_candle_setup(self, asset: Asset,
+                          trade_data: TradeData, row: pd.Series) -> None:
         """Activates trade triggers and sets stop losses.
 
         Parameters
@@ -54,22 +43,23 @@ class ContinuationTrade(Strategy):
             Row of live data.
         """
 
-        trend, msb, continuation, stay_in_range = self.ms.next_candle(row)
-        self.close = row['close']
+        trend, msb, continuation, stay_in_range = asset.ms.next_candle(row)
 
         if continuation and trend:
-            self._entry = 0.66*self.ms.prev_low[0] + 0.33*self.ms.prev_high[0]
-            self._stop_loss = self.ms.prev_low[0]
-            self._long_trigger = True
+            trade_data.entry = 0.66*asset.ms.prev_low[0] + 0.33*asset.ms.prev_high[0]
+            trade_data.stop_loss = asset.ms.prev_low[0]
+            trade_data.long_trigger = True
         elif continuation and (not trend):
-            self._entry = 0.66*self.ms.prev_high[0] + 0.33*self.ms.prev_low[0]
-            self._stop_loss = self.ms.prev_high[0]
-            self._short_trigger = True
+            trade_data.entry = 0.66*asset.ms.prev_high[0] + 0.33*asset.ms.prev_low[0]
+            trade_data.stop_loss = asset.ms.prev_high[0]
+            trade_data.short_trigger = True
 
-        self.position_size.append(self._position)
-        self.equity_curve = np.append(self.equity_curve, self.equity)
+        trade_data.close = row['close']
+        trade_data.equity_curve = np.append(trade_data.equity_curve,
+                                            trade_data.mark_to_market)
 
-    def next_candle_trade(self, row: pd.Series) -> None:
+    def next_candle_trade(self, asset: Asset, params: Params,
+                          trade_data: TradeData, row: pd.Series) -> None:
         """Enters trade after triggered and follows through until trade exit.
 
         Parameters
@@ -79,63 +69,66 @@ class ContinuationTrade(Strategy):
         """
 
         # Entry Long
-        if self._long_trigger:
+        if trade_data.long_trigger:
             price = row['close']
-            if price <= self.ms.prev_low[0]:
-                self._long_trigger = False
-            elif price >= self.ms.prev_high[0] and not self.ms.continuation:
-                self._long_trigger = False
+            if price <= asset.ms.prev_low[0]:
+                trade_data.long_trigger = False
+            elif price >= asset.ms.prev_high[0] \
+                 and not asset.ms.continuation:
+                trade_data.long_trigger = False
             else:
-                if price <= self._entry:
-                    target = self.ms.prev_high[0]
-                    risk = price - self._stop_loss
+                if price <= trade_data.entry:
+                    target = asset.ms.prev_high[0]
+                    risk = price - trade_data.stop_loss
                     reward_risk = (target - price)/risk
-                    if reward_risk >= self._params.reward_risk:
-                        self._target = target
-                        self._long(price, risk/price)
-                        self.num_trades += 1
-                        self._long_position = True
-                        self._long_trigger = False
+                    if reward_risk >= params.reward_risk:
+                        trade_data.target = target
+                        self._long(price, risk/price, asset, params,
+                                   trade_data)
+                        trade_data.num_trades += 1
+                        trade_data.long_position = True
+                        trade_data.long_trigger = False
 
-        if self._long_position:
+        if trade_data.long_position:
             price = row['close']
-            if price > self._target:
-                self._close_long_trade(price)
+            if price > trade_data.target:
+                self._close_long_trade(price, trade_data)
                 logging.info('Take Profit on Long Position')
-                self._long_position = False
-                self.wins += 1
-                self.win_rate = self.wins/self.num_trades
-            if price < self._stop_loss:
-                self._close_long_trade(price)
+                trade_data.long_position = False
+                trade_data.wins += 1
+                trade_data.win_rate = trade_data.wins/trade_data.num_trades
+            if price < trade_data.stop_loss:
+                self._close_long_trade(price, trade_data)
                 logging.info('Stop Loss Hit on Long Position')
-                self._long_position = False
+                trade_data.long_position = False
 
-        if self._short_trigger:
+        if trade_data.short_trigger:
             price = row['close']
-            if price >= self.ms.prev_high[0]:
-                self._short_trigger = False
-            elif price <= self.ms.prev_low[0] and not self.ms.continuation:
-                self._short_trigger = False
+            if price >= asset.ms.prev_high[0]:
+                trade_data.short_trigger = False
+            elif price <= asset.ms.prev_low[0] and not asset.ms.continuation:
+                trade_data.short_trigger = False
             else:
-                if price >= self._entry:
-                    risk = self._stop_loss - price
-                    reward_risk = (price - self.ms.prev_low[0])/risk
-                    if reward_risk >= self._params.reward_risk:
-                        self._target = self.ms.prev_low[0]
-                        self._short(price, risk/price)
-                        self.num_trades += 1
-                        self._short_position = True
-                        self._short_trigger = False
+                if price >= trade_data.entry:
+                    risk = trade_data.stop_loss - price
+                    reward_risk = (price - asset.ms.prev_low[0])/risk
+                    if reward_risk >= params.reward_risk:
+                        trade_data.target = asset.ms.prev_low[0]
+                        self._short(price, risk/price, asset, params,
+                                    trade_data)
+                        trade_data.num_trades += 1
+                        trade_data.short_position = True
+                        trade_data.short_trigger = False
 
-        if self._short_position:
+        if trade_data.short_position:
             price = row['close']
-            if price < self._target:
-                self._close_short_trade(price)
+            if price < trade_data.target:
+                self._close_short_trade(price, trade_data)
                 logging.info('Take Profit on Short Position')
-                self._short_position = False
-                self.wins += 1
-                self.win_rate = self.wins/self.num_trades
-            if price > self._stop_loss:
-                self._close_short_trade(price)
+                trade_data.short_position = False
+                trade_data.wins += 1
+                trade_data.win_rate = trade_data.wins/trade_data.num_trades
+            if price > trade_data.stop_loss:
+                self._close_short_trade(price, trade_data)
                 logging.info('Stop Loss Hit on Short Position')
-                self._short_position = False
+                trade_data.short_position = False

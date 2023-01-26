@@ -7,3 +7,9 @@ src/backtests/*
 !src/backtests/backtest_reports
 src/backtests/backtest_reports/*
 !src/backtests/backtest_reports/Continuation_Trade
+
+src/PortfolioManager
+src/backtests/backtest_strategy
+
+src/database/datapipeline
+src/database/DataHandler

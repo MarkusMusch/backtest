@@ -1,10 +1,7 @@
-import copy
 from datetime import datetime, timedelta
 import pandas as pd
 
-from Assets import Asset, Params
-from MarketStructure import MarketStructure
-from Strategy import Strategy
+from Strategy import Strategy, TradeLog
 
 
 class Backtest():
@@ -13,52 +10,41 @@ class Backtest():
     def __init__(self):
         pass
 
-    def _simulate(self, strat: Strategy, data: pd.DataFrame) -> None:
+    def _simulate(self, log: TradeLog, data: pd.DataFrame) -> None:
         """Goes through a given set of historical data and applies the trading
         strategy to this data."""
 
         for index, row in data.iterrows():
-            strat.next_candle_trade(row)
-            strat.next_candle_setup(row)
+            log.strategy.next_candle_trade(log.asset, log.params,
+                                           log.trade_data, row)
+            log.strategy.next_candle_setup(log.asset, log.trade_data, row)
 
-    def train(self, trade: Strategy, market: Asset, params_space: list,
-              data: pd.DataFrame, return_metric: callable, reward_metric: callable) -> Asset:
+    def train(self, trade_logs: list, data: pd.DataFrame,
+              return_metric: callable, reward_metric: callable) -> TradeLog:
         """Train the model."""
 
-        ath = market.ath
-        prev_low = market.prev_low
         reward_max = 0
-        asset_opt = copy.deepcopy(market)
+        optimal_trade = None
 
-        for params in params_space:
+        for log in trade_logs:
 
-            ms = MarketStructure(ath, prev_low, ath, prev_low)
-            rtit = trade(ms, market, params)
+            self._simulate(log, data)
 
-            self._simulate(rtit, data)
-
-            returns = return_metric(rtit.equity_curve)
+            returns = return_metric(log.trade_data.equity_curve)
             reward_tmp = reward_metric(returns)
 
             if reward_tmp > reward_max:
-                optimal_params = params
-                asset_opt = copy.deepcopy(market)
-                equity = rtit.equity_curve
+                optimal_trade = log
                 reward_max = reward_tmp
 
-        return asset_opt, optimal_params, equity
+        return optimal_trade
 
-    def test(self, trade: Strategy, market: Asset, params: Params,
-             data: pd.DataFrame) -> None:
+    def test(self, optimal_trade: TradeLog, data: pd.DataFrame) -> None:
         """Test the trained model."""
 
-        ms = MarketStructure(market.ath, market.prev_low, market.ath,
-                             market.prev_low)
-        rtit = trade(ms, market, params)
+        self._simulate(optimal_trade, data)
 
-        self._simulate(rtit, data)
-
-        return rtit.equity_curve
+        return optimal_trade
         
 
 class BacktestTwoTF(Backtest):

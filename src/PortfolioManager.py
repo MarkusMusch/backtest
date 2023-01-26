@@ -79,16 +79,6 @@ class PortfolioManager:
 
         return pf
 
-    def plot_equity(self) -> None:
-        """Plot the portfolios equity curve."""
-
-        pf = self.equity_curve
-
-        plt.figure(figsize=(18, 9))
-        plt.grid(True)
-        plt.plot(pf)
-        plt.show()
-
     def add_strategy(self, strategy: Strategy) -> None:
         """Add a new strategy to the portfolio.
 
@@ -99,19 +89,3 @@ class PortfolioManager:
         """
 
         self.strategies.append(strategy)
-
-    def initialize_trades(self) -> None:
-        """Go through a given set of historical data and applies the trading
-        strategy to this data, tracking results."""
-
-        for idx, strat in enumerate(tqdm(self.strategies)):
-            start_time = strat[0].start_time
-            
-            df = pd.read_csv('./database/datasets/binance_futures/' +
-                             strat[0].ticker + '/'
-                             + strat[1].timeframe + '.csv')
-            df = df[df['open time'] >= int(start_time.timestamp()*1000)]
-
-            for index, row in df.iterrows():
-                strat[1].next_candle_trade(row)
-                strat[1].next_candle_setup(row)
