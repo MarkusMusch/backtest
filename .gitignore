@@ -1,6 +1,8 @@
+database/*
+!database/datasets
+
 src/strategies/*
 !src/strategies/ContinuationTrade.py
-
 
 src/backtests/*
 !src/backtests/backtest_continuation_trade.py
@@ -10,6 +12,3 @@ src/backtests/backtest_reports/*
 
 src/PortfolioManager
 src/backtests/backtest_strategy
-
-database/
-!database/datasets
