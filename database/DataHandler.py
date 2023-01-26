@@ -13,7 +13,7 @@ from datetime import datetime, timedelta
 
 import pandas as pd
 
-from src.RESTClient import RESTClient
+from RESTClient import RESTClient
 
 
 class DataHandler:

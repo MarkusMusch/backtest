@@ -12,8 +12,8 @@ currentdir = os.path.dirname(os.path.realpath(__file__))
 parentdir = os.path.dirname(currentdir)
 sys.path.append(parentdir)
 
-from src.RESTClient import BinanceFuturesClient
-from src.DataHandler import DataHandler
+from RESTClient import BinanceFuturesClient
+from DataHandler import DataHandler
 from src.Assets import Timeframes
 
 

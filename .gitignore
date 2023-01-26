@@ -11,5 +11,5 @@ src/backtests/backtest_reports/*
 src/PortfolioManager
 src/backtests/backtest_strategy
 
-src/database/datapipeline
-src/database/DataHandler
+database/
+!database/datasets
