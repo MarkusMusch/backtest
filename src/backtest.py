@@ -27,10 +27,12 @@ class Timeframes(Enum):
     FOUR_HOURS = '4h'
     ONE_DAY = '1d'
 
+
 class Strategies(Enum):
     """Strategies available for backtesting."""
 
     CONTINUATION_TRADE = ContinuationTrade()
+
 
 # Name of the backtest: will be used as the name of the reports directory
 test_name = 'Continuation Trade'
@@ -51,17 +53,16 @@ risk_reward = [2.0, 3.0]
 # Timeframe to be used for the backtest
 timeframe = Timeframes.ONE_HOUR.value
 
+
 if __name__ == '__main__':
 
     bt = Backtest()
     trade_logs = []
 
-
-
     df = pd.read_csv('./database/datasets/binance_futures/' +
                      ticker[0] + '/' +
                      timeframe + '.csv')
-    
+
     first_price = df.iloc[0]
     date = first_price['open time']
     ms = MarketStructure((first_price.high, date),
@@ -69,7 +70,7 @@ if __name__ == '__main__':
                          (first_price.high, date),
                          (first_price.low, date))
     asset = Asset(ticker[0], ticker[1], ms)
-    
+
     for idxr, risk in enumerate(risk_samples):
         for idxl, leverage in enumerate(leverage_samples):
             for idxrr, rr in enumerate(risk_reward):

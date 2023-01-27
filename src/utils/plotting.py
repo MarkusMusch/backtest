@@ -15,7 +15,7 @@ def plot_backtest(trade_log: TradeLog,
                   equity_test: np.array) -> None:
     """Plot the equity curve of backtest during ttraining and testing phase
        and a confidence interval of the bootstraped distribution of the
-       optimal strategy during training to potentially invalidate the 
+       optimal strategy during training to potentially invalidate the
        equity curve on the testing data.
 
     Parameters
@@ -53,34 +53,40 @@ def plot_backtest(trade_log: TradeLog,
     upper_percentile = np.percentile(sample, 95, axis=1)
     lower_percentile = np.percentile(sample, 5, axis=1)
 
-    axs[0].plot(np.concatenate((equity_train, equity_test)), color='k', label='Equity Curve')
-    axs[0].plot(x[-len(mean_percentile):], mean_percentile, color='g', label='Median')
+    axs[0].plot(np.concatenate((equity_train, equity_test)), color='k',
+                label='Equity Curve')
+    axs[0].plot(x[-len(mean_percentile):], mean_percentile, color='g',
+                label='Median')
     axs[0].plot(x[-len(upper_percentile):], upper_percentile, color='r',
                 label='90% Confidence Interval')
     axs[0].plot(x[-len(lower_percentile):], lower_percentile, color='r')
-    axs[0].plot(x[-len(equity_test):], equity_test, color='k', label='Equity Curve')
+    axs[0].plot(x[-len(equity_test):], equity_test, color='k',
+                label='Equity Curve')
 
     axs[1].axis('off')
-    table = axs[1].table(cellText=[[stats_test['sharpe']], 
+    table = axs[1].table(cellText=[[stats_test['sharpe']],
                                    [stats_test['sortino']],
                                    [stats_test['max_dd']],
                                    [stats_test['musch']]],
-                                   rowLabels=['Sharpe', 'Sortino',
-                                              'Max. Drawdown', 'Musch'],
-                                   colLabels=['Metrics'], loc='best')
+                         rowLabels=['Sharpe', 'Sortino',
+                                    'Max. Drawdown', 'Musch'],
+                         colLabels=['Metrics'], loc='best')
     table.auto_set_column_width(col=[0, 1])
 
     axs[0].set_ylim([0, 1.1*upper_percentile.max()])
     axs[0].legend()
 
     axs[0].set_title('Equity Curve ' + trade_log.asset.ticker
-                     + ' at max. risk {:.2%} '.format(trade_log.params.risk)
-                     + 'with max. leverage {:.1f} '.format(trade_log.params.leverage)
-                     + 'and R/R {:.1f} \n'.format(trade_log.params.reward_risk))
+                     + ' at max. risk {:.2%} '
+                     .format(trade_log.params.risk)
+                     + 'with max. leverage {:.1f} '
+                     .format(trade_log.params.leverage)
+                     + 'and R/R {:.1f} \n'
+                     .format(trade_log.params.reward_risk))
     axs[0].grid(True)
 
     path = './src/backtest_reports/' + strategy_name \
-            + '/' + trade_log.asset.ticker + '/'
+           + '/' + trade_log.asset.ticker + '/'
     if not os.path.exists(path):
         os.makedirs(path)
 

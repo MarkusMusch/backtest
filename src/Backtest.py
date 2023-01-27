@@ -20,7 +20,7 @@ class Backtest():
     def _simulate(self, log: TradeLog, data: pd.DataFrame) -> None:
         """Goes through a given set of historical data and applies the trading
         strategy to this data.
-        
+
         Parameters
         ----------
         log : TradeLog
@@ -37,7 +37,7 @@ class Backtest():
     def train(self, trade_logs: list, data: pd.DataFrame,
               return_metric: callable, reward_metric: callable) -> TradeLog:
         """Train the model on a set of training data.
-        
+
         Parameters
         ----------
         trade_logs : list
@@ -79,7 +79,7 @@ class Backtest():
 
     def test(self, optimal_trade: TradeLog, data: pd.DataFrame) -> None:
         """Test the trained model on prviously unknown test data.
-        
+
         Parameters
         ----------
         optimal_trade : TradeLog

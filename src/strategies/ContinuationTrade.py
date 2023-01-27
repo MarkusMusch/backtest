@@ -50,11 +50,13 @@ class ContinuationTrade(Strategy):
         trend, msb, continuation, stay_in_range = asset.ms.next_candle(row)
 
         if continuation and trend:
-            trade_data.entry = 0.66*asset.ms.prev_low[0] + 0.33*asset.ms.prev_high[0]
+            trade_data.entry = 0.66*asset.ms.prev_low[0] \
+                + 0.33*asset.ms.prev_high[0]
             trade_data.stop_loss = asset.ms.prev_low[0]
             trade_data.long_trigger = True
         elif continuation and (not trend):
-            trade_data.entry = 0.66*asset.ms.prev_high[0] + 0.33*asset.ms.prev_low[0]
+            trade_data.entry = 0.66*asset.ms.prev_high[0] \
+                + 0.33*asset.ms.prev_low[0]
             trade_data.stop_loss = asset.ms.prev_high[0]
             trade_data.short_trigger = True
 
@@ -83,8 +85,7 @@ class ContinuationTrade(Strategy):
             price = row['close']
             if price <= asset.ms.prev_low[0]:
                 trade_data.long_trigger = False
-            elif price >= asset.ms.prev_high[0] \
-                 and not asset.ms.continuation:
+            elif price >= asset.ms.prev_high[0] and not asset.ms.continuation:
                 trade_data.long_trigger = False
             else:
                 if price <= trade_data.entry:

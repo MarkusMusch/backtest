@@ -1,6 +1,6 @@
 src/Portfolio.py
-src/utils/telegram.py
-src/backtest_strategy.py
+src/utils/tg.py
+src/backtest_strategies.py
 
 database/*
 !database/datasets

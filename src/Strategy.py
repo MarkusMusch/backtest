@@ -62,7 +62,7 @@ class Strategy(ABC):
         trade_data.equity -= (1.+trade_data.exchange_fees) * coins*price
 
     def _short(self, price: float, risk: float, asset: Asset, params: Params,
-              trade_data: TradeData) -> None:
+               trade_data: TradeData) -> None:
         """Enters a short trade.
 
         Parameters
