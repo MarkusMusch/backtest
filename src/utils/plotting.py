@@ -1,3 +1,5 @@
+"""Collect functions for different plotting scenarios."""
+
 import os
 
 import numpy as np
@@ -11,7 +13,22 @@ def plot_backtest(trade_log: TradeLog,
                   strategy_name: str,
                   equity_train: np.array,
                   equity_test: np.array) -> None:
-    """Plot the backtest."""
+    """Plot the equity curve of backtest during ttraining and testing phase
+       and a confidence interval of the bootstraped distribution of the
+       optimal strategy during training to potentially invalidate the 
+       equity curve on the testing data.
+
+    Parameters
+    ----------
+    trade_log : TradeLog
+        The trade log of the backtest.
+    strategy_name : str
+        The name of the strategy.
+    equity_train : np.array
+        The equity curve of the training phase.
+    equity_test : np.array
+        The equity curve of the testing phase.
+    """
 
     x_train = len(equity_train)
     x_test = len(equity_test)
@@ -62,7 +79,7 @@ def plot_backtest(trade_log: TradeLog,
                      + 'and R/R {:.1f} \n'.format(trade_log.params.reward_risk))
     axs[0].grid(True)
 
-    path = './src/backtests/backtest_reports/' + strategy_name \
+    path = './src/backtest_reports/' + strategy_name \
             + '/' + trade_log.asset.ticker + '/'
     if not os.path.exists(path):
         os.makedirs(path)

@@ -3,8 +3,7 @@
 Classes
 ----------
 MarketStructure:
-    Represents the market structure of a crypto coin
-    at one point in time.
+    Represents the market structure of an asset at one point in time.
 """
 
 import logging

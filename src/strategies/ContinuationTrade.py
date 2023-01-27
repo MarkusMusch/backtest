@@ -2,16 +2,16 @@
 
 Classes
 ----------
-    ContinuationTrade:
-        Implement the buy and sell logic of a continuation trade.
+ContinuationTrade:
+    Implement the buy and sell logic of a continuation trade.
 """
 import logging
 
 import numpy as np
 import pandas as pd
 
-from Assets import Asset, Params, TradeData
-from Strategy import Strategy
+from src.Assets import Asset, Params, TradeData
+from src.Strategy import Strategy
 
 
 class ContinuationTrade(Strategy):
@@ -33,12 +33,16 @@ class ContinuationTrade(Strategy):
     def __init__(self):
         super().__init__()
 
-    def next_candle_setup(self, asset: Asset,
-                          trade_data: TradeData, row: pd.Series) -> None:
+    def next_candle_setup(self, asset: Asset, trade_data: TradeData,
+                          row: pd.Series) -> None:
         """Activates trade triggers and sets stop losses.
 
         Parameters
         ----------
+        asset : Asset
+            The asset to be traded.
+        trade_data : TradeData
+            The data log of the current backtest.
         row : pd.Series
             Row of live data.
         """
@@ -64,6 +68,12 @@ class ContinuationTrade(Strategy):
 
         Parameters
         ----------
+        asset : Asset
+            The asset to be traded.
+        params : Params
+            The parameters for the strategy.
+        trade_data : TradeData
+            The data log of the current backtest.
         row : pd.Series
             Row of live data.
         """
@@ -88,7 +98,7 @@ class ContinuationTrade(Strategy):
                         trade_data.num_trades += 1
                         trade_data.long_position = True
                         trade_data.long_trigger = False
-
+        # Exit Long
         if trade_data.long_position:
             price = row['close']
             if price > trade_data.target:
@@ -102,6 +112,7 @@ class ContinuationTrade(Strategy):
                 logging.info('Stop Loss Hit on Long Position')
                 trade_data.long_position = False
 
+        # Entry Short
         if trade_data.short_trigger:
             price = row['close']
             if price >= asset.ms.prev_high[0]:
@@ -120,6 +131,7 @@ class ContinuationTrade(Strategy):
                         trade_data.short_position = True
                         trade_data.short_trigger = False
 
+        # Exit Short
         if trade_data.short_position:
             price = row['close']
             if price < trade_data.target:

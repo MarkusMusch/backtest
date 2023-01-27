@@ -1,57 +1,66 @@
-"""Implement classes to represent assets.
+"""Implement classes to represent assets and strategies.
 
-Implements dictionaries representing assets and their respective risk
+Implements classes representing assets and their respective risk
 parameters for trading.
 
 Classes
 ----------
-    Implements a dataclass Asset holding relevant information for one asset.
+Asset:
+    Implement a dataclass Asset holding relevant information for one asset.
+Params:
+    Implement a dataclass Params holding a set of parameters for one strategy.
+TradeData:
+    Implement a dataclass TradeData holding relevant information for one trade
+    for one set of parameters.
 """
 
 from dataclasses import dataclass
-from datetime import datetime
 
 import numpy as np
 
-from MarketStructure import MarketStructure
+from src.MarketStructure import MarketStructure
 
 
+@dataclass
 class Asset:
-    """Represents an Asset Class to be traded.
+    """Represent an Asset Class to be traded.
 
     ...
 
     Attributes
     ----------
-    market_name : str
+    ticker : str
         The ticker of the asset to be traded.
-    ath : tuple
-        A past all time high of the asset.
-    prev_low : tuple
-        Low preceding the all time high.
-    start_time : datetime
-        The time at which the historical data starts.
-    initial_equity : float
-        The initial equity to be used for trading.
-    timeframe : str
         The timeframe of the historical data.
     decimals : int
         The maximum number of decimals allowed for the asset.
+    ms : MarketStructure
+        The current market structure of the asset.
     """
-    def __init__(self, ticker: str, ath: tuple, prev_low: tuple,
-                 start_time: datetime, decimals: int):
-        self.ticker = ticker
-        self.ath = ath
-        self.prev_low = prev_low
-        self.start_time = start_time
-        self.decimals = decimals
-        self.ms = MarketStructure(ath, prev_low, ath, prev_low)
-        # listing: datetime
-        # exchange: str
+
+    ticker: str
+    decimals: int
+    ms: MarketStructure
 
 
 @dataclass
 class Params:
+    """Represent the parameters for a trading strategy.
+
+    ...
+
+    Attributes
+    ----------
+    risk : float
+        The percentage of the portfolio at risk per trade.
+    reward_risk : float
+        The reward to risk ratio of the strategy.
+    leverage : float
+        The maximal leverage of the strategy.
+    timeframe : str
+        The timeframe of the historical data.
+    """
+
     risk: float
     reward_risk: float
     leverage: float
@@ -60,19 +69,57 @@ class Params:
 
 @dataclass
 class TradeData:
+    """Represent the data of a trade.
+
+    ...
+
+    Attributes
+    ----------
+    exchange_fees : float
+        The exchange fees for the trade.
+    entry : float
+        The entry price of the trade.
+    stop_loss : float
+        The stop loss price of the trade.
+    target : float
+        The target price of the trade.
+    close : float
+        The close price of the trade.
+    num_trades : float
+        The number of trades executed.
+    wins : int
+        The number of winning trades.
+    win_rate : float
+        The win rate of the strategy.
+    position : float
+        The position size of the current trade.
+    long_trigger : bool
+        True if the current setup justifies a long trade.
+    long_position : bool
+        True if the strategy is currently in an active long trade.
+    short_trigger : bool
+        True if the current setup justifies a short trade.
+    short_position : bool
+        True if the strategy is currently in an active short trade.
+    equity_curve : np.array
+        The equity curve of the strategy.
+    equity : float
+        The current equity value of the strategy.
+    """
+
     exchange_fees: float
-    num_trades: float = 0.
-    win_rate: float = 0.
-    position: float = 0.
-    wins: int = 0
-    long_trigger: bool = False
-    long_position: bool = False
-    short_trigger: bool = False
-    short_position: bool = False
     entry: float = None
     stop_loss: float = None
     target: float = None
     close: float = None
+    num_trades: float = 0.
+    wins: int = 0
+    win_rate: float = 0.
+    position: float = 0.
+    long_trigger: bool = False
+    long_position: bool = False
+    short_trigger: bool = False
+    short_position: bool = False
     equity_curve: np.array = np.array([100.0])
     equity: float = 100.0
 
@@ -83,33 +130,10 @@ class TradeData:
         Returns
         -------
         float
-            The current equity value of the strategy.
+            The current equity value of the strategy marked to market.
         """
 
         if self.long_position or self.short_position:
             return (self.position*self.close) + self.equity
         else:
             return self.equity_curve[-1]
-    
-
-btc = Asset('BTCBUSD', (58434.0, '2021-02-21 19:00:00+00:00'),
-            (57465.0, '2021-02-21 18:00:00+00:00'),
-            datetime(2021, 2, 21, 20, 0, 0, 0), 3)
-
-eth = Asset('ETHBUSD', (4875.4, '2021-11-10 14:00:00+00:00'),
-             (4697.8, '2021-11-10 12:00:00+00:00'),
-             datetime(2021, 11, 10, 15, 0, 0, 0), 3)
-
-sol = Asset('SOLBUSD', (261.5175, '2021-11-06 21:00:00+00:00'),
-            (252.49, '2021-11-06 20:00:00+00:00'),
-            datetime(2021, 11, 6, 22, 0, 0, 0), 0)
-
-bnb = Asset('BNBBUSD', (693.775, '2021-05-10 06:00:00+00:00'),
-            (671.355, '2021-05-10 05:00:00+00:00'),
-            datetime(2021, 5, 10, 7, 0, 0, 0), 2)
-
-doge = Asset('DOGEBUSD', (0.744998, '2021-05-08 04:00:00+00:00'),
-             (0.6674, '2021-05-08 00:00:00+00:00'),
-             datetime(2021, 5, 8, 5, 0, 0, 0), 0)
-
-coins = [btc, eth, sol, bnb, doge]

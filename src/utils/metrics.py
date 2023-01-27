@@ -1,3 +1,5 @@
+"""Collect functions to calculate performance metrics from an equity curve."""
+
 import numpy as np
 
 def calculate_returns(equity_curve: np.array) -> np.array:
@@ -158,6 +160,11 @@ def get_stats(equity_curve: np.array) -> dict:
     ----------
     equity_curve : np.array
         The equity curve of the strategy.
+
+    Returns
+    -------
+    dict
+        Dictionary containing the stats of the strategy.
     """
 
     returns = calculate_returns(equity_curve)
@@ -176,7 +183,13 @@ def get_stats(equity_curve: np.array) -> dict:
             'musch': musch}
 
 def print_stats(equity_curve: np.array) -> None:
-    """Calculate and print important stats of the strategy."""
+    """Calculate and print important stats of the strategy.
+    
+    Parameters
+    ----------
+    equity_curve : np.array
+        The equity curve of the strategy.
+    """
 
     stats = get_stats(equity_curve)
 

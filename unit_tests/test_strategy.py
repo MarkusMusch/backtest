@@ -1,96 +1,77 @@
-from unittest.mock import patch
-
-from src.Assets import btc_cont_1h
+from src.Assets import Asset, Params, TradeData
 from src.strategies.ContinuationTrade import ContinuationTrade
 from src.MarketStructure import MarketStructure
 
 
-@patch('src.Strategy.requests.post')
-def test_strategy_send_message(mock_post):
-    """Test sending a message to Telegram."""
-
-    ms = MarketStructure(btc_cont_1h.ath, btc_cont_1h.prev_low, btc_cont_1h.ath,
-                         btc_cont_1h.prev_low)
-
-    strategy = ContinuationTrade(ms, btc_cont_1h)
-
-    response = strategy._send_message('This is a test')
-
-    assert response is not None
-
-def test_strategy_long(mock_post):
+def test_strategy_long():
     """Test executing a long trade on exchange."""
 
-    ms = MarketStructure(btc_cont_1h.ath, btc_cont_1h.prev_low, btc_cont_1h.ath,
-                         btc_cont_1h.prev_low)
+    strategy = ContinuationTrade()
 
-    strategy = ContinuationTrade(ms, btc_cont_1h)
+    ms = MarketStructure((1, 1), (1, 1), (1, 1), (1, 1))
+    asset = Asset('BTCBUSD', 3, ms)
+    params = Params(0.02, 2, 2, '1h')
+    trade_data = TradeData(0.0)
 
     price = 19894
     risk = 0.01943
 
-    strategy._long(price, risk)
+    strategy._long(price, risk, asset, params, trade_data)
 
-    trade_size = min(btc_cont_1h.max_leverage*btc_cont_1h.initial_equity,
-                     (btc_cont_1h.max_risk/risk) * btc_cont_1h.initial_equity)
-    coins = round(trade_size/price, btc_cont_1h.decimals)
+    trade_size = (0.02/risk) * 100
+    coins = round(trade_size/price, 3)
 
-    assert strategy._position == coins
-    assert strategy._equity == btc_cont_1h.initial_equity \
-        - coins*price
-        #- (1.+ec.taker_fees_USD_futures) * coins*price
+    assert trade_data.position == coins
+    assert trade_data.equity == 100 - coins*price
 
 
-def test_strategy_short(mock_post):
+def test_strategy_short():
     """Test executing a long trade on exchange."""
 
-    ms = MarketStructure(btc_cont_1h.ath, btc_cont_1h.prev_low, btc_cont_1h.ath,
-                         btc_cont_1h.prev_low)
+    strategy = ContinuationTrade()
 
-    strategy = ContinuationTrade(ms, btc_cont_1h)
+    ms = MarketStructure((1, 1), (1, 1), (1, 1), (1, 1))
+    asset = Asset('BTCBUSD', 3, ms)
+    params = Params(0.02, 2, 2, '1h')
+    trade_data = TradeData(0.0)
 
     price = 19894
     risk = 0.01943
 
-    strategy._short(price, risk)
+    strategy._short(price, risk, asset, params, trade_data)
 
-    trade_size = min(btc_cont_1h.max_leverage*btc_cont_1h.initial_equity,
-                     (btc_cont_1h.max_risk/risk) * btc_cont_1h.initial_equity)
-    coins = round(trade_size/price, btc_cont_1h.decimals)
+    trade_size = (0.02/risk) * 100
+    coins = round(trade_size/price, 3)
 
-    assert strategy._position == -coins
-    assert strategy._equity == btc_cont_1h.initial_equity \
-        + coins*price
-        # + (1.-ec.taker_fees_USD_futures) * coins*price
+    assert trade_data.position == -coins
+    assert trade_data.equity == 100 + coins*price
 
 
-def test_strategy_close_long(mock_post):
+def test_strategy_close_long():
     """Test executing a long trade on exchange."""
 
-    ms = MarketStructure(btc_cont_1h.ath, btc_cont_1h.prev_low, btc_cont_1h.ath,
-                         btc_cont_1h.prev_low)
+    strategy = ContinuationTrade()
 
-    strategy = ContinuationTrade(ms, btc_cont_1h)
+    trade_data = TradeData(0.0)
 
     price = 19894
 
-    strategy._close_long_trade(price)
+    strategy._close_long_trade(price, trade_data)
 
-    assert strategy._position == 0
-    assert strategy._equity == btc_cont_1h.initial_equity
+    assert trade_data.position == 0
+    assert trade_data.equity == 100
 
 
-def test_strategy_close_short(mock_post):
+def test_strategy_close_short():
     """Test executing a short trade on exchange."""
 
-    ms = MarketStructure(btc_cont_1h.ath, btc_cont_1h.prev_low, btc_cont_1h.ath,
-                         btc_cont_1h.prev_low)
+    strategy = ContinuationTrade()
 
-    strategy = ContinuationTrade(ms, btc_cont_1h)
+    trade_data = TradeData(0.0)
 
     price = 19894
 
-    strategy._close_short_trade(price)
+    strategy._close_short_trade(price, trade_data)
 
-    assert strategy._position == 0
-    assert strategy._equity == btc_cont_1h.initial_equity
+    assert trade_data.position == 0
+    assert trade_data.equity == 100

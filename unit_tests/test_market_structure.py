@@ -1,6 +1,5 @@
 import pandas as pd
 
-from src.Assets import btc_cont_1h
 from src.MarketStructure import MarketStructure
 
 
@@ -23,8 +22,10 @@ def test_ms_stay_in_range():
     """Test if market structure staying in range is being reconginzed
     correctly."""
 
-    ms = MarketStructure(btc_cont_1h.ath, btc_cont_1h.prev_low, btc_cont_1h.ath,
-                         btc_cont_1h.prev_low)
+    ms = MarketStructure((58434.0, '2021-02-21 19:00:00+00:00'),
+                         (57465.0, '2021-02-21 18:00:00+00:00'),
+                         (58434.0, '2021-02-21 19:00:00+00:00'),
+                         (57465.0, '2021-02-21 18:00:00+00:00'))
 
     df = pd.read_csv('./database/datasets/binance_futures/BTCBUSD/1h.csv')
     df = df[(df['open time'] >= 1613934000000)
@@ -48,8 +49,10 @@ def test_ms_continuation():
     """Test if market structure trend continuation is being reconginzed
     correctly."""
 
-    ms = MarketStructure(btc_cont_1h.ath, btc_cont_1h.prev_low, btc_cont_1h.ath,
-                         btc_cont_1h.prev_low)
+    ms = MarketStructure((58434.0, '2021-02-21 19:00:00+00:00'),
+                         (57465.0, '2021-02-21 18:00:00+00:00'),
+                         (58434.0, '2021-02-21 19:00:00+00:00'),
+                         (57465.0, '2021-02-21 18:00:00+00:00'))
 
     df = pd.read_csv('./database/datasets/binance_futures/BTCBUSD/1h.csv')
     df = df[(df['open time'] >= 1613934000000)
@@ -72,8 +75,10 @@ def test_ms_continuation():
 def test_ms_break():
     """Test if market structure break is being reconginzed correctly."""
 
-    ms = MarketStructure(btc_cont_1h.ath, btc_cont_1h.prev_low, btc_cont_1h.ath,
-                         btc_cont_1h.prev_low)
+    ms = MarketStructure((57465.0, '2021-02-21 18:00:00+00:00'),
+                         (58434.0, '2021-02-21 19:00:00+00:00'),
+                         (57465.0, '2021-02-21 18:00:00+00:00'),
+                         (58434.0, '2021-02-21 19:00:00+00:00'))
 
     df = pd.read_csv('./database/datasets/binance_futures/BTCBUSD/1h.csv')
     df = df[(df['open time'] >= 1613934000000)
@@ -97,8 +102,10 @@ def test_ms():
     """Test if market structure is being reconginzed correctly
     over a longer period."""
 
-    ms = MarketStructure(btc_cont_1h.ath, btc_cont_1h.prev_low, btc_cont_1h.ath,
-                         btc_cont_1h.prev_low)
+    ms = MarketStructure((58434.0, '2021-02-21 19:00:00+00:00'),
+                         (57465.0, '2021-02-21 18:00:00+00:00'),
+                         (58434.0, '2021-02-21 19:00:00+00:00'),
+                         (57465.0, '2021-02-21 18:00:00+00:00'))
 
     df = pd.read_csv('./database/datasets/binance_futures/BTCBUSD/1h.csv')
     df = df[(df['open time'] >= 1613934000000)

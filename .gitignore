@@ -1,3 +1,7 @@
+src/Portfolio.py
+
+src/utils/telegram.py
+
 database/*
 !database/datasets
 
@@ -5,10 +9,9 @@ src/strategies/*
 !src/strategies/ContinuationTrade.py
 
 src/backtests/*
-!src/backtests/backtest_continuation_trade.py
+!src/backtests/backtest.py
 !src/backtests/backtest_reports
+
 src/backtests/backtest_reports/*
 !src/backtests/backtest_reports/Continuation_Trade
 
-src/PortfolioManager
-src/backtests/backtest_strategy

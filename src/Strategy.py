@@ -2,16 +2,15 @@
 
 Classes
 ----------
-    Strategy:
-        Implements generic properties of strategies that are
-        common amongst all particular trading strategies
-        such as buying and selling.
+Strategy:
+    Implements generic properties of strategies that are common amongst all
+    particular trading strategies such as buying and selling.
 """
 
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
 
-from Assets import Asset, Params, TradeData
+from src.Assets import Asset, Params, TradeData
 
 import pandas as pd
 
@@ -27,16 +26,14 @@ class Strategy(ABC):
     @abstractmethod
     def next_candle_setup(self, asset: Asset,
                           trade_data: TradeData, row: pd.Series) -> None:
-        """Initializes the strategy by iterating through historical data
-        without executing trades."""
+        """Checks for valid trade set upss."""
 
         pass
 
     @abstractmethod
     def next_candle_trade(self, asset: Asset, params: Params,
                           trade_data: TradeData, row: pd.Series) -> None:
-        """Checks for valid trade set ups with new live data and execute
-        live trades."""
+        """Simulate executing trades."""
 
         pass
 
@@ -50,6 +47,12 @@ class Strategy(ABC):
             The price at which to buy the asset.
         risk : float
             The risk per trade.
+        asset : Asset
+            The asset to be traded.
+        params : Params
+            The parameters for the strategy.
+        trade_data : TradeData
+            The data log of the current backtest.
         """
 
         trade_size = min(params.leverage*trade_data.equity,
@@ -68,6 +71,12 @@ class Strategy(ABC):
             The price at which to sell the asset.
         risk : float
             The risk per trade.
+        asset : Asset
+            The asset to be traded.
+        params : Params
+            The parameters for the strategy.
+        trade_data : TradeData
+            The data log of the current backtest.
         """
 
         trade_size = min(params.leverage*trade_data.equity,
@@ -83,9 +92,10 @@ class Strategy(ABC):
         ----------
         price : float
             The price at which to close the position.
+        trade_data : TradeData
+            The data log of the current backtest.
         """
 
-        # coins = self._position
         cash = trade_data.position*price
         trade_data.equity += (1.-trade_data.exchange_fees) * cash
         trade_data.position = 0
@@ -97,9 +107,10 @@ class Strategy(ABC):
         ----------
         price : float
             The price at which to close the position.
+        trade_data : TradeData
+            The data log of the current backtest.
         """
 
-        # coins = self._position
         cash = trade_data.position*price
         trade_data.equity += (1.-trade_data.exchange_fees) * cash
         trade_data.position = 0
@@ -107,6 +118,22 @@ class Strategy(ABC):
 
 @dataclass
 class TradeLog:
+    """Encapsulate the four main components of a backtest.
+
+    ...
+
+    Attributes
+    ----------
+    strategy : Strategy
+        The strategy used in the backtest.
+    asset : Asset
+        The asset traded in the backtest.
+    params : Params
+        The parameters of the strategy.
+    trade_data : TradeData
+        The data log of the current backtest.
+    """
+
     strategy: Strategy
     asset: Asset
     params: Params
