@@ -10,7 +10,7 @@ The *backtest* repository is a spin-off of the [bot](https://github.com/MarkusMu
 
 2. **Training your model**
 
-	* The Backtest class provides a train and a test method making it easy to do parameter optimizations and test the results for validity. This way, you can plug in your own strategies and see how they would have fared under different market conditions in the past.
+	* The Backtest class provides a *train* and a *test* method making it easy to do parameter optimizations and test the results for validity. This way, you can plug in your own strategies and see how they would have fared under different market conditions in the past.
 
 3. **Testing your model**
 
@@ -20,7 +20,7 @@ The *backtest* repository is a spin-off of the [bot](https://github.com/MarkusMu
 	<img src="https://github.com/MarkusMusch/backtest/blob/main/images/BTCBUSD_1h.png" />
 	</p>
 
-    > The backtest in the image above shows the return curve optimized for maximal Sharpe ratio on the first 75% of the data and the equity curve of the same strategy on the test data together with the median and 90% confidence interval of 250 samples bootstraped from the returns of the strategy that performed best on the training data. On the right hand side, a table with performance metrics for the equity curve on the test data is being shown.
+    > The backtest in the image above shows the return curve optimized for maximal Sharpe Ratio on the first 75% of the data and the equity curve of the same strategy on the test data together with the median and 90% confidence interval of 250 samples bootstraped from the returns of the strategy that performed best on the training data. On the right hand side, a table with performance metrics for the equity curve on the test data is being shown.
 
 ## Installation
 
@@ -61,7 +61,7 @@ The ```next_candle_trade``` method checks if a new trigger has been set or if th
 
 If ```_long``` or ```_short``` is being called some more conditions such as a sufficient reward/risk ratio are being checked. If those conditions are satisfied a trade is being recorded in a trade log for backtesting.
 
-If ```_exit_long_trade``` or ```_exit_short_trade``` is being called the current trade is being noted as closed on the trade for backtesting.
+If ```_exit_long_trade``` or ```_exit_short_trade``` is being called the current trade is being noted as closed on the trade log.
 
 <p align="center">
 <img src="https://github.com/MarkusMusch/backtest/blob/main/images/strategy_control_flow.png" />
