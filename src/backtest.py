@@ -43,7 +43,7 @@ ticker = ('BTCBUSD', 3)
 # Strategy to be backtested
 strategy = Strategies.CONTINUATION_TRADE.value
 # Percentage of the dataset to be used for training
-train_test_split = 0.5
+train_test_split = 0.75
 # Risk samples to be used for the backtest
 risk_samples = np.linspace(0.01, 0.1, 5)
 # Leverage samples to be used for the backtest

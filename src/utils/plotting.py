@@ -53,14 +53,14 @@ def plot_backtest(trade_log: TradeLog,
     upper_percentile = np.percentile(sample, 95, axis=1)
     lower_percentile = np.percentile(sample, 5, axis=1)
 
-    axs[0].plot(np.concatenate((equity_train, equity_test)), color='k',
+    axs[0].plot(np.concatenate((equity_train, equity_test)), color='b',
                 label='Equity Curve')
-    axs[0].plot(x[-len(mean_percentile):], mean_percentile, color='g',
+    axs[0].plot(x[-len(mean_percentile):], mean_percentile, color='y',
                 label='Median')
     axs[0].plot(x[-len(upper_percentile):], upper_percentile, color='r',
                 label='90% Confidence Interval')
     axs[0].plot(x[-len(lower_percentile):], lower_percentile, color='r')
-    axs[0].plot(x[-len(equity_test):], equity_test, color='k',
+    axs[0].plot(x[-len(equity_test):], equity_test, color='b',
                 label='Equity Curve')
 
     axs[1].axis('off')

@@ -138,3 +138,19 @@ class TradeLog:
     asset: Asset
     params: Params
     trade_data: TradeData
+
+
+    def simulate(self, data: pd.DataFrame) -> None:
+        """Goes through a given set of historical data and applies the trading
+        strategy to this data.
+
+        Parameters
+        ----------
+        data : pd.DataFrame
+            The historical data to be simulated.
+        """
+
+        for index, row in data.iterrows():
+            self.strategy.next_candle_trade(self.asset, self.params,
+                                            self.trade_data, row)
+            self.strategy.next_candle_setup(self.asset, self.trade_data, row)
