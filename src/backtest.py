@@ -28,6 +28,10 @@ class Tickers(Enum):
     SOLBUSD = ('SOLBUSD', 0)
     BNBBUSD = ('BNBBUSD', 2)
     DOGEBUSD = ('DOGEBUSD', 0)
+    LINKBUSD = ('LINKBUSD', 1)
+    LTCBUSD = ('LTCBUSD', 2)
+    MATICBUSD = ('MATICBUSD', 0)
+    XRPBUSD = ('XRPBUSD', 1)
 
 
 class Timeframes(Enum):
@@ -41,17 +45,15 @@ class Timeframes(Enum):
 class Strategies(Enum):
     """Strategies available for backtesting."""
 
-    CONTINUATION_TRADE = ContinuationTrade()
+    CONTINUATION_TRADE = (ContinuationTrade(), 'Continuation Trade')
 
 
-# Name of the backtest: will be used as the name of the reports directory
-test_name = 'Continuation Trade'
 # Fees for the exchange
 exchange_fees = 0.0004
 # Assets to be backtested
 ticker = Tickers.DOGEBUSD.value
 # Strategy to be backtested
-strategy = Strategies.CONTINUATION_TRADE.value
+strategy, test_name = Strategies.CONTINUATION_TRADE.value
 # Percentage of the dataset to be used for training
 train_test_split = 0.75
 # Risk samples to be used for the backtest

@@ -63,7 +63,6 @@ If ```_long``` or ```_short``` is being called some more conditions such as a su
 
 If ```_exit_long_trade``` or ```_exit_short_trade``` is being called the current trade is being noted as closed on the trade for backtesting.
 
-
 <p align="center">
 <img src="https://github.com/MarkusMusch/backtest/blob/main/images/strategy_control_flow.png" />
 </p>
@@ -73,32 +72,65 @@ This diagram shows the whole control flow described above.
 ### Writing Backtests
 
 #### Single Strategy Backtest
-To set up a new backtest for an individual strategy, you will create a new .py file in the bot/back_tests/ directory with the name of your backtest.
 
-You can copy paste the code from the exisiting backtest_continuation_trade.py module. In this module, we backtest the continuation trade strategy. For this we import the ContinuationTrade class like this:
+We backtest the continuation trade strategy. For this we import the ContinuationTrade class like this:
+
+If you want to trade markets that are not included in the current code, make sure to define them in the Assets.py module and import them.
 
 ```Python
-from  src.strategies.ContinuationTrade  import  ContinuationTrade
+class Tickers(Enum):
+    """Tickers available for backtesting."""
+
+    BTCBUSD = ('BTCBUSD', 3)
+    ETHBUSD = ('ETHBUSD', 3)
+    SOLBUSD = ('SOLBUSD', 0)
+    BNBBUSD = ('BNBBUSD', 2)
+    DOGEBUSD = ('DOGEBUSD', 0)
+    LINKBUSD = ('LINKBUSD', 1)
+    LTCBUSD = ('LTCBUSD', 2)
+    MATICBUSD = ('MATICBUSD', 0)
+    XRPBUSD = ('XRPBUSD', 1)
+```
+
+```Python
+class Timeframes(Enum):
+    """Timeframes available for backtesting."""
+
+    ONE_HOUR = '1h'
+    FOUR_HOURS = '4h'
+    ONE_DAY = '1d'
 ```
 
 You will replace this import line with the module and class of your own strategy. You can also change the preset list of markets and adjust the set of risk levels, leverage sizes, and reward/risk ratios if the predefined ones do not fit your particular use case.
 
-```Python  
-markets = [btc_cont, eth_cont, sol_cont, doge_cont]
+```Python
+class Strategies(Enum):
+    """Strategies available for backtesting."""
 
-risk_samples = [0.001, 0.005 , 0.01, 0.05, 0.1, 0.2]
-leverage_samples = [1 , 3, 5, 10]
-risk_reward = [2.0, 3.0]
+    CONTINUATION_TRADE = (ContinuationTrade(), 'Continuation Trade')
 ```
-If you want to trade markets that are not included in the current code, make sure to define them in the Assets.py module and import them.
 
-The last step is to loop through all markets and run the backtests. Here you have to change the second argument "ContinuationTrade" to be *your* strategy.
+To set up a new backtest for an individual strategy, the only thing you have to do is set the desired parameters in the backtest.py module.
 
 ```Python
-for  market  in  markets:
-	bt.run(ec, ContinuationTrade, market, risk_samples, leverage_samples,
-		   risk_reward, Timeframes)
+# Fees for the exchange
+exchange_fees = 0.0004
+# Assets to be backtested
+ticker = Tickers.DOGEBUSD.value
+# Strategy to be backtested
+strategy, test_name = Strategies.CONTINUATION_TRADE.value
+# Percentage of the dataset to be used for training
+train_test_split = 0.75
+# Risk samples to be used for the backtest
+risk_samples = np.linspace(0.01, 0.1, 5)
+# Leverage samples to be used for the backtest
+leverage_samples = [1, 3, 5, 10]
+# Risk reward samples to be used for the backtest
+risk_reward = [2.0, 3.0]
+# Timeframe to be used for the backtest
+timeframe = Timeframes.ONE_HOUR.value
 ```
+
 The Backtest object will also save a report of you backtest in the backtest/src/backtest_reports/ directory including equity curves and important performance metrics such as Sharpe ratio, Sortino ratio, and maximum draw down of your test run.
 
 ### Unit Tests
