@@ -40,7 +40,7 @@ First, clone the repository.
 
 ### Writing a Strategy
 
-We utilize the Strategy Design Pattern to provide a unified interface for applying different trading strategies in backtests. The actual logic of each individual trading strategy is implemented in a derived class of the interface and therefore easily interchangeable. For this purpose, we implement an abstract class called "Strategy", that only implements the methods that all strategies have in common, namely ```_long```, ```_short```, ```_close_long_trade``` and ```_close_short_trade```. At the same time, it also provides two abstract methods ```next_candle_setup``` and ```next_candle_trade``` that provide the interface for users of this class, which have to be implemented by each derived class.
+We utilize the *Strategy Design Pattern* to provide a unified interface for applying different trading strategies in backtests. The actual logic of each individual trading strategy is implemented in a derived class of the interface and therefore easily interchangeable. For this purpose, we implement an abstract class called "Strategy", that only implements the methods that all strategies have in common, namely ```_long```, ```_short```, ```_close_long_trade``` and ```_close_short_trade```. At the same time, it also provides two abstract methods ```next_candle_setup``` and ```next_candle_trade``` that provide the interface for users of this class, which have to be implemented by each derived class.
 
 Our example is a strategy that bets on the continuation of an ongoing trend. If the market is in an up-trend, and certain criteria are met, the strategy enters a long trade to profit from the continuation of the up-trend. In the same way, we enter a short trade if the market is in an ongoing down-trend.
 
@@ -53,15 +53,15 @@ So, to implement our trend continuation strategy, we create a new file in the ba
   width=50%>
 </p>
 
-The Strategy base class has a two abstract methods that we have to implement in our child class.
+The Strategy base class has two abstract methods that we have to implement in our child class.
 
 The ```next_candle_setup``` and ```next_candle_trade``` methods give a public interface for our backtest modules.
 
-The ```execute_trade``` method checks if a new trigger has been set or if there is an existing position and calls the ```entry_long```, ```entry_short```, ```exit_long```, or ```exit_short``` method respectively.
+The ```next_candle_trade``` method checks if a new trigger has been set or if there is an existing position and calls the ```_long```, ```_short```, ```_exit_long_trade```, or ```_exit_short_trade``` method respectively.
 
-If ```entry_long``` or ```entry_short``` is being called some more conditions such as a sufficient reward/risk ratio are being checked. If those conditions are satisfied a trade is being entered on exchange via our RESTClient object for live trading, or recorded without actual execution for backtesting.
+If ```_long``` or ```_short``` is being called some more conditions such as a sufficient reward/risk ratio are being checked. If those conditions are satisfied a trade is being recorded in a trade log for backtesting.
 
-If ```exit_long``` or ```exit_short``` is being called the current trade is being closed on exchange via our RESTClient object for live trading, or recorded without actual execution for backtesting.
+If ```_exit_long_trade``` or ```_exit_short_trade``` is being called the current trade is being noted as closed on the trade for backtesting.
 
 
 <p align="center">
