@@ -40,66 +40,22 @@ First, clone the repository.
 
 ### Writing a Strategy
 
+We utilize the Strategy Design Pattern to provide a unified interface for applying different trading strategies in backtests. The actual logic of each individual trading strategy is implemented in a derived class of the interface and therefore easily interchangeable. For this purpose, we implement an abstract class called "Strategy", that only implements the methods that all strategies have in common, namely ```_long```, ```_short```, ```_close_long_trade``` and ```_close_short_trade```. At the same time, it also provides two abstract methods ```next_candle_setup``` and ```next_candle_trade``` that provide the interface for users of this class, which have to be implemented by each derived class.
+
 Our example is a strategy that bets on the continuation of an ongoing trend. If the market is in an up-trend, and certain criteria are met, the strategy enters a long trade to profit from the continuation of the up-trend. In the same way, we enter a short trade if the market is in an ongoing down-trend.
 
-Whilst the abstract strategy class is in the bot/src/ directory, the actual implementation of a particular strategy is in the bot/src/strategies directory. 
+Whilst the abstract strategy class is in the backtest/src/ directory, the actual implementation of a particular strategy is in the backtest/src/strategies directory. 
 
-So, to implement our trend continuation strategy, we create a new file in the bot/src/strategies/ directory. In our case it is called ContinuationTrade.py. In this file we implement the trade logic in a class that inherits from Strategy.
+So, to implement our trend continuation strategy, we create a new file in the backtest/src/strategies/ directory. In our case it is called ContinuationTrade.py. In this file we implement the trade logic in a class that inherits from Strategy.
 
 <p align="center">
   <img src="https://github.com/MarkusMusch/backtest/blob/main/images/Strategy_UML.png"
   width=50%>
 </p>
 
-The Strategy base class has a total of eight abstract methods that we have to implement in our child class.
+The Strategy base class has a two abstract methods that we have to implement in our child class.
 
-The ```next_candle_init``` and ```next_candle_live``` methods give a public interface for our backtest and live trading modules to distinguish between initialization, backtesting, and live trading.
-
-If we are initializing a strategy for live trading, we call the ```next_candle_init``` method. 
-
-
-```Python
-def  next_candle_init(self, row: pd.Series) -> None:
-	"""Initializes the strategy by iterating through historical data
-	without executing trades.
-
-	Parameters
-	----------
-	row : pd.Series
-	Row of historical data.
-	"""
-
-	self._setup_trade(row)
-```
-
-
-This method calls the ```setup_trade``` methods.
-
-The ```setup_trade``` method checks if a trade set up has been triggered with the recent candle, and if yes, sets the trigger flag for a long or a short set up to ```True```.
-
-If we are not trading live, we record the current equity in every step to evaluate the equity curve later on.
-
-If we are trading live or running a backtest, we call the ```next_candle_live``` method.
-
-
-
-```Python
-def  next_candle_live(self, row: pd.Series) -> None:
-"""Checks for valid trade set ups with new live data and execute live
-trades.
-
-Parameters
-----------
-row : pd.Series
-Row of live data.
-"""
-
-self._execute_trade(row)
-self._setup_trade(row)
-```
-
-
-This method calls both the ```execute_trade``` method to generate trading signals, and the ```setup_trade``` method to detect new set ups.
+The ```next_candle_setup``` and ```next_candle_trade``` methods give a public interface for our backtest modules.
 
 The ```execute_trade``` method checks if a new trigger has been set or if there is an existing position and calls the ```entry_long```, ```entry_short```, ```exit_long```, or ```exit_short``` method respectively.
 
@@ -109,7 +65,7 @@ If ```exit_long``` or ```exit_short``` is being called the current trade is bein
 
 
 <p align="center">
-<img src="https://github.com/MarkusMusch/bot/blob/main/images/strategy_control_flow.png" />
+<img src="https://github.com/MarkusMusch/backtest/blob/main/images/strategy_control_flow.png" />
 </p>
 
 This diagram shows the whole control flow described above.
