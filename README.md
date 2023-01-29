@@ -1,6 +1,6 @@
 # Backtest
 
-This is a spin-off of the [bot](https://github.com/MarkusMusch/bot) repository focusing solely on the backtesting engine.
+The *backtest* repository is a spin-off of the [bot](https://github.com/MarkusMusch/bot) repository. The [bot](https://github.com/MarkusMusch/bot) is a one-stop toolkit for fully automated algorithmic trading. The *backtest* project is focusing solely on the backtesting engine.
 
 ## Includes:
 
