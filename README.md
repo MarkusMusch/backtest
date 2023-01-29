@@ -1,6 +1,6 @@
 # Backtest
 
-This is a spin off of the [bot](https://github.com/MarkusMusch/bot) repository focusing solely on the backtesting engine.
+This is a spin-off of the [bot](https://github.com/MarkusMusch/bot) repository focusing solely on the backtesting engine.
 
 ## Includes:
 
@@ -10,17 +10,17 @@ This is a spin off of the [bot](https://github.com/MarkusMusch/bot) repository f
 
 2. **Training your model**
 
-	* The Backtest class serves as a template for backtesting, making it easy to plug in your own strategies and see how they would have fared under different market conditions in the past. It provides a train and a test method making it easy to do parameter optimizations and test the results for validity.
+	* The Backtest class provides a train and a test method making it easy to do parameter optimizations and test the results for validity. This makes it easy to plug in your own strategies and see how they would have fared under different market conditions in the past.
 
 3. **Testing your model**
 
-	* Backtest reports for the example strategy that provide a comprehensive overview of the strategy's performance, including plots of the equity curve and important performance metrics for different parameters.
+	* Backtest reports for the example strategy that provide a comprehensive overview of the strategy's performance, including plots of the equity curve, confidence intervals of bootstraped returns, and important performance metrics for different parameters.
 
 	<p align="center">
 	<img src="https://github.com/MarkusMusch/backtest/blob/main/images/BTCBUSD_1h.png" />
 	</p>
 
-    > The backtest in the image above shows the return curve optimized for maximal Sharpe ratio on the first 75% of the data and the equity curve of the same strategy on the test data together with the median and 90% confidence interval of 250 samples bootstraped from the returns of the optimal strategy in the training data. On the right hand side a table with performance metrics for the equity curve on the test data is being shown.
+    > The backtest in the image above shows the return curve optimized for maximal Sharpe ratio on the first 75% of the data and the equity curve of the same strategy on the test data together with the median and 90% confidence interval of 250 samples bootstraped from the returns of the strategy that performed best on the training data. On the right hand side, a table with performance metrics for the equity curve on the test data is being shown.
 
 ## Installation
 
@@ -44,9 +44,9 @@ We utilize the *Strategy Design Pattern* to provide a unified interface for appl
 
 Our example is a strategy that bets on the continuation of an ongoing trend. If the market is in an up-trend, and certain criteria are met, the strategy enters a long trade to profit from the continuation of the up-trend. In the same way, we enter a short trade if the market is in an ongoing down-trend.
 
-Whilst the abstract strategy class is in the backtest/src/ directory, the actual implementation of a particular strategy is in the backtest/src/strategies directory. 
+Whilst the abstract strategy class is in the backtest/src directory, the actual implementation of a particular strategy is in the backtest/src/strategies directory. 
 
-So, to implement our trend continuation strategy, we create a new file in the backtest/src/strategies/ directory. In our case it is called ContinuationTrade.py. In this file we implement the trade logic in a class that inherits from Strategy.
+So, to implement our trend continuation strategy, we create a new file in the backtest/src/strategies directory. In our case it is called ContinuationTrade.py. In this file we implement the trade logic in a class that inherits from Strategy.
 
 <p align="center">
   <img src="https://github.com/MarkusMusch/backtest/blob/main/images/Strategy_UML.png"
@@ -71,9 +71,9 @@ This diagram shows the whole control flow described above.
 
 ### Writing Backtests
 
-#### Single Strategy Backtest
+#### Writing Single Strategy Backtests
 
-To encapsulate the tradable tickers, timeframes and strategies, we collect each of those in an ```Enum```, respectively.
+To encapsulate the tradable tickers, timeframes, and strategies we collect each of those in an ```Enum```, respectively.
 
 If you want to trade markets that are not included in the current code, make sure to define them in the Tickers Enum module and download the necessary price data.
 
@@ -140,7 +140,7 @@ risk_reward = [2.0, 3.0]
 timeframe = Timeframes.ONE_HOUR.value
 ```
 
-A report of your backtest will be saved in the backtest/src/backtest_reports/ directory including equity curves and important performance metrics such as Sharpe ratio, Sortino ratio, and maximum draw down of your test run.
+A report of your backtest will be saved in the backtest/src/backtest_reports directory including equity curves and important performance metrics such as Sharpe ratio, Sortino ratio, and maximum draw down of your test run.
 
 ### Unit Tests
 
