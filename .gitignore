@@ -9,6 +9,6 @@ src/strategies/*
 !src/strategies/ContinuationTrade.py
 
 src/backtest_reports/*
-!src/backtests/backtest_reports/Continuation_Trade
+!src/backtests/backtest_reports/Continuation_Trade/BTCBUSD
 
 src/backtests
