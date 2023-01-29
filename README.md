@@ -1,4 +1,4 @@
-# backtest
+# Backtest
 
 This is a spin off of the [bot](https://github.com/MarkusMusch/bot) repository focusing solely on the backtesting engine.
 
@@ -20,7 +20,7 @@ This is a spin off of the [bot](https://github.com/MarkusMusch/bot) repository f
 	<img src="https://github.com/MarkusMusch/backtest/blob/main/images/BTCBUSD_1h.png" />
 	</p>
 
-    > The backtest in the image above shows the returns that would have been achieved with the full portfolio of proprietary trading strategies starting 21st of February 2021.
+    > The backtest in the image above shows the return curve optimized for maximal Sharpe ratio on the first 75% of the data and the equity curve of the same strategy on the test data together with the median and 90% confidence interval of 250 samples bootstraped from the returns of the optimal strategy in the training data.
 
 ## Installation
 
