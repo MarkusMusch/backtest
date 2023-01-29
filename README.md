@@ -10,7 +10,7 @@ This is a spin-off of the [bot](https://github.com/MarkusMusch/bot) repository f
 
 2. **Training your model**
 
-	* The Backtest class provides a train and a test method making it easy to do parameter optimizations and test the results for validity. This makes it easy to plug in your own strategies and see how they would have fared under different market conditions in the past.
+	* The Backtest class provides a train and a test method making it easy to do parameter optimizations and test the results for validity. This way, you can plug in your own strategies and see how they would have fared under different market conditions in the past.
 
 3. **Testing your model**
 
@@ -27,7 +27,7 @@ This is a spin-off of the [bot](https://github.com/MarkusMusch/bot) repository f
 First, clone the repository.
 
  ```bash
- git clone 'https://github.com/MarkusMusch/backtest.git' && cd bot/
+ git clone 'https://github.com/MarkusMusch/backtest.git' && cd backtest/
  ```
  
  Second, install all third party libraries necessary. Those are all listed in the [requirements.txt](requirements.txt).
@@ -44,7 +44,7 @@ We utilize the *Strategy Design Pattern* to provide a unified interface for appl
 
 Our example is a strategy that bets on the continuation of an ongoing trend. If the market is in an up-trend, and certain criteria are met, the strategy enters a long trade to profit from the continuation of the up-trend. In the same way, we enter a short trade if the market is in an ongoing down-trend.
 
-Whilst the abstract strategy class is in the backtest/src directory, the actual implementation of a particular strategy is in the backtest/src/strategies directory. 
+Whilst the abstract strategy class is in the *backtest/src* directory, the actual implementation of a particular strategy is in the ```backtest/src/strategies``` directory. 
 
 So, to implement our trend continuation strategy, we create a new file in the backtest/src/strategies directory. In our case it is called ContinuationTrade.py. In this file we implement the trade logic in a class that inherits from Strategy.
 
