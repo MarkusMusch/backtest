@@ -90,5 +90,5 @@ def plot_backtest(trade_log: TradeLog,
     if not os.path.exists(path):
         os.makedirs(path)
 
-    plt.savefig(path + trade_log.params.timeframe + '.pdf', dpi=300)
+    plt.savefig(path + trade_log.params.timeframe + '.png', dpi=300)
     print(trade_log.asset.ticker, ' done! \n')

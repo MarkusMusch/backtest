@@ -20,6 +20,16 @@ import src.utils.plotting as plotting
 from src.Strategy import  TradeLog
 
 
+class Tickers(Enum):
+    """Tickers available for backtesting."""
+
+    BTCBUSD = ('BTCBUSD', 3)
+    ETHBUSD = ('ETHBUSD', 3)
+    SOLBUSD = ('SOLBUSD', 0)
+    BNBBUSD = ('BNBBUSD', 2)
+    DOGEBUSD = ('DOGEBUSD', 0)
+
+
 class Timeframes(Enum):
     """Timeframes available for backtesting."""
 
@@ -39,7 +49,7 @@ test_name = 'Continuation Trade'
 # Fees for the exchange
 exchange_fees = 0.0004
 # Assets to be backtested
-ticker = ('BTCBUSD', 3)
+ticker = Tickers.DOGEBUSD.value
 # Strategy to be backtested
 strategy = Strategies.CONTINUATION_TRADE.value
 # Percentage of the dataset to be used for training

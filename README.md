@@ -4,13 +4,13 @@ This is a spin off of the [bot](https://github.com/MarkusMusch/bot) repository f
 
 ## Includes:
 
-1. **Building**
+1. **Building your own backtests**
 
-	* Two ready-to-use examples for an example strategy and an example portfolio, making it easy to get started with backtesting your own strategies.
+	* A ready-to-use backtest for an example strategy, making it easy to get started with backtesting your own strategies.
 
 2. **Training your model**
 
-	* The Backtest class serves as a template for backtesting, making it easy to plug in your own strategies and see how they would have fared under different market conditions in the past.
+	* The Backtest class serves as a template for backtesting, making it easy to plug in your own strategies and see how they would have fared under different market conditions in the past. It provides a train and a test method making it easy to do parameter optimizations and test the results for validity.
 
 3. **Testing your model**
 
@@ -20,7 +20,7 @@ This is a spin off of the [bot](https://github.com/MarkusMusch/bot) repository f
 	<img src="https://github.com/MarkusMusch/backtest/blob/main/images/BTCBUSD_1h.png" />
 	</p>
 
-    > The backtest in the image above shows the return curve optimized for maximal Sharpe ratio on the first 75% of the data and the equity curve of the same strategy on the test data together with the median and 90% confidence interval of 250 samples bootstraped from the returns of the optimal strategy in the training data.
+    > The backtest in the image above shows the return curve optimized for maximal Sharpe ratio on the first 75% of the data and the equity curve of the same strategy on the test data together with the median and 90% confidence interval of 250 samples bootstraped from the returns of the optimal strategy in the training data. On the right hand side a table with performance metrics for the equity curve on the test data is being shown.
 
 ## Installation
 
@@ -47,7 +47,7 @@ Whilst the abstract strategy class is in the bot/src/ directory, the actual impl
 So, to implement our trend continuation strategy, we create a new file in the bot/src/strategies/ directory. In our case it is called ContinuationTrade.py. In this file we implement the trade logic in a class that inherits from Strategy.
 
 <p align="center">
-  <img src="https://github.com/MarkusMusch/bot/blob/main/images/strategy_inheritance.png"
+  <img src="https://github.com/MarkusMusch/backtest/blob/main/images/Strategy_UML.png"
   width=50%>
 </p>
 
@@ -114,7 +114,7 @@ If ```exit_long``` or ```exit_short``` is being called the current trade is bein
 
 This diagram shows the whole control flow described above.
 
-### Writing Backtests: Single Strategies and Full Portfolios
+### Writing Backtests
 
 #### Single Strategy Backtest
 To set up a new backtest for an individual strategy, you will create a new .py file in the bot/back_tests/ directory with the name of your backtest.
@@ -143,17 +143,15 @@ for  market  in  markets:
 	bt.run(ec, ContinuationTrade, market, risk_samples, leverage_samples,
 		   risk_reward, Timeframes)
 ```
-The Backtest object will also save a report of you backtest in the bot/back_tests/backtest_reports/ directory including equity curves and important performance metrics such as Sharpe ratio, Sortino ratio, and maximum draw down of your test run.
-
-<p align="center">
-  <img src="https://github.com/MarkusMusch/bot/blob/main/images/single_strat_backtest.png">
-</p>
+The Backtest object will also save a report of you backtest in the backtest/src/backtest_reports/ directory including equity curves and important performance metrics such as Sharpe ratio, Sortino ratio, and maximum draw down of your test run.
 
 ### Unit Tests
 
 To run the included unit tests execute
 
+```bash
 pytest-3 -v
+```
 
 ## Contributing
 
