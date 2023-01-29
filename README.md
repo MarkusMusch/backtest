@@ -40,20 +40,20 @@ First, clone the repository.
 
 ### Writing a Strategy
 
-We utilize the *Strategy Design Pattern* to provide a unified interface for applying different trading strategies in backtests. The actual logic of each individual trading strategy is implemented in a derived class of the interface and therefore easily interchangeable. For this purpose, we implement an abstract class called "Strategy", that only implements the methods that all strategies have in common, namely ```_long```, ```_short```, ```_close_long_trade``` and ```_close_short_trade```. At the same time, it also provides two abstract methods ```next_candle_setup``` and ```next_candle_trade``` that provide the interface for users of this class, which have to be implemented by each derived class.
+We utilize the *Strategy Design Pattern* to provide a unified interface for applying different trading strategies in backtests. The actual logic of each individual trading strategy is implemented in a derived class of the interface and therefore easily interchangeable. For this purpose, we implement an abstract class called *Strategy*, that only implements the methods that all strategies have in common, namely ```_long```, ```_short```, ```_close_long_trade``` and ```_close_short_trade```. At the same time, it also provides two abstract methods ```next_candle_setup``` and ```next_candle_trade``` that provide the interface for users of this class, which have to be implemented by each derived class.
 
 Our example is a strategy that bets on the continuation of an ongoing trend. If the market is in an up-trend, and certain criteria are met, the strategy enters a long trade to profit from the continuation of the up-trend. In the same way, we enter a short trade if the market is in an ongoing down-trend.
 
 Whilst the abstract strategy class is in the *backtest/src* directory, the actual implementation of a particular strategy is in the *backtest/src/strategies* directory. 
 
-So, to implement our trend continuation strategy, we create a new file in the *backtest/src/strategies* directory. In our case it is called ContinuationTrade.py. In this file we implement the trade logic in a class that inherits from Strategy.
+So, to implement our trend continuation strategy, we create a new file in the *backtest/src/strategies* directory. In our case it is called *ContinuationTrade.py*. In this file we implement the trade logic in a class that inherits from *Strategy*.
 
 <p align="center">
   <img src="https://github.com/MarkusMusch/backtest/blob/main/images/Strategy_UML.png"
   width=50%>
 </p>
 
-The Strategy base class has two abstract methods that we have to implement in our child class.
+The *Strategy* base class has two abstract methods that we have to implement in our child class.
 
 The ```next_candle_setup``` and ```next_candle_trade``` methods give a public interface for our backtest modules.
 
@@ -75,7 +75,7 @@ This diagram shows the whole control flow described above.
 
 To encapsulate the tradable tickers, timeframes, and strategies we collect each of those in an ```Enum```, respectively.
 
-If you want to trade markets that are not included in the current code, make sure to define them in the Tickers Enum module and download the necessary price data.
+If you want to trade markets that are not included in the current code, make sure to define them in the *Tickers* Enum and download the necessary price data.
 
 Currently, there is support for perpetual futures on the 9 different BUSD pairs you can see bellow.
 
@@ -108,7 +108,7 @@ class Timeframes(Enum):
     ONE_DAY = '1d'
 ```
 
-After importing your own strategies, you add them to the "Strategies" Enum which currently only contains the included "Continuation Trade" Strategy.
+After importing your own strategies, you add them to the *Strategies* Enum which currently only contains the included *Continuation Trade* strategy.
 
 ```Python
 class Strategies(Enum):
@@ -117,7 +117,7 @@ class Strategies(Enum):
     CONTINUATION_TRADE = (ContinuationTrade(), 'Continuation Trade')
 ```
 
-To set up a new backtest for an individual strategy, the only thing you have to do is set the desired parameters in the backtest.py module.
+To set up a new backtest for an individual strategy, the only thing you have to do is set the desired parameters in the *backtest.py* module.
 
 You can change the preset ticker and strategy, and adjust the set of risk levels, leverage sizes, and reward/risk ratios if the predefined ones do not fit your particular use case.
 
@@ -140,7 +140,7 @@ risk_reward = [2.0, 3.0]
 timeframe = Timeframes.ONE_HOUR.value
 ```
 
-A report of your backtest will be saved in the backtest/src/backtest_reports directory including equity curves and important performance metrics such as Sharpe ratio, Sortino ratio, and maximum draw down of your test run.
+A report of your backtest will be saved in the *backtest/src/backtest_reports* directory including equity curves and important performance metrics such as Sharpe Ratio, Sortino Ratio, and Maximum Draw Down of your test run.
 
 ### Unit Tests
 
