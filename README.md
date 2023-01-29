@@ -73,9 +73,11 @@ This diagram shows the whole control flow described above.
 
 #### Single Strategy Backtest
 
-We backtest the continuation trade strategy. For this we import the ContinuationTrade class like this:
+To encapsulate the tradable tickers, timeframes and strategies, we collect each of those in an ```Enum```, respectively.
 
-If you want to trade markets that are not included in the current code, make sure to define them in the Assets.py module and import them.
+If you want to trade markets that are not included in the current code, make sure to define them in the Tickers Enum module and download the necessary price data.
+
+Currently, there is support for perpetual futures on the 9 different BUSD pairs you can see bellow.
 
 ```Python
 class Tickers(Enum):
@@ -92,16 +94,21 @@ class Tickers(Enum):
     XRPBUSD = ('XRPBUSD', 1)
 ```
 
+For those trading pairs, price data on the following time frames is available:
+
 ```Python
 class Timeframes(Enum):
     """Timeframes available for backtesting."""
 
+    FIVE_MINUTES = '5m'
+    FIFTEEN_MINUTES = '15m'
+    THIRTY_MINUTES = '30m'
     ONE_HOUR = '1h'
     FOUR_HOURS = '4h'
     ONE_DAY = '1d'
 ```
 
-You will replace this import line with the module and class of your own strategy. You can also change the preset list of markets and adjust the set of risk levels, leverage sizes, and reward/risk ratios if the predefined ones do not fit your particular use case.
+After importing your own strategies, you add them to the "Strategies" Enum which currently only contains the included "Continuation Trade" Strategy.
 
 ```Python
 class Strategies(Enum):
@@ -112,11 +119,13 @@ class Strategies(Enum):
 
 To set up a new backtest for an individual strategy, the only thing you have to do is set the desired parameters in the backtest.py module.
 
+You can change the preset ticker and strategy, and adjust the set of risk levels, leverage sizes, and reward/risk ratios if the predefined ones do not fit your particular use case.
+
 ```Python
 # Fees for the exchange
 exchange_fees = 0.0004
 # Assets to be backtested
-ticker = Tickers.DOGEBUSD.value
+ticker = Tickers.BTCBUSD.value
 # Strategy to be backtested
 strategy, test_name = Strategies.CONTINUATION_TRADE.value
 # Percentage of the dataset to be used for training
@@ -131,7 +140,7 @@ risk_reward = [2.0, 3.0]
 timeframe = Timeframes.ONE_HOUR.value
 ```
 
-The Backtest object will also save a report of you backtest in the backtest/src/backtest_reports/ directory including equity curves and important performance metrics such as Sharpe ratio, Sortino ratio, and maximum draw down of your test run.
+A report of your backtest will be saved in the backtest/src/backtest_reports/ directory including equity curves and important performance metrics such as Sharpe ratio, Sortino ratio, and maximum draw down of your test run.
 
 ### Unit Tests
 

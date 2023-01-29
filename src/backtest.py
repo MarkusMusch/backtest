@@ -37,6 +37,9 @@ class Tickers(Enum):
 class Timeframes(Enum):
     """Timeframes available for backtesting."""
 
+    FIVE_MINUTES = '5m'
+    FIFTEEN_MINUTES = '15m'
+    THIRTY_MINUTES = '30m'
     ONE_HOUR = '1h'
     FOUR_HOURS = '4h'
     ONE_DAY = '1d'
@@ -51,7 +54,7 @@ class Strategies(Enum):
 # Fees for the exchange
 exchange_fees = 0.0004
 # Assets to be backtested
-ticker = Tickers.DOGEBUSD.value
+ticker = Tickers.BTCBUSD.value
 # Strategy to be backtested
 strategy, test_name = Strategies.CONTINUATION_TRADE.value
 # Percentage of the dataset to be used for training
